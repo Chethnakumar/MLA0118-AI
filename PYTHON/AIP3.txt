@@ -1,0 +1,52 @@
+from collections import deque
+
+def water_jug_bfs(jug1, jug2, target):
+    visited = set()  # To keep track of visited states
+    queue = deque([(0, 0)])  # Initial state: both jugs are empty
+    steps = []
+
+    while queue:
+        (current1, current2) = queue.popleft()
+        
+        # If we've reached the target amount, record the steps and return
+        if current1 == target or current2 == target:
+            steps.append((current1, current2))
+            return steps
+        
+        # Skip this state if already visited
+        if (current1, current2) in visited:
+            continue
+        
+        # Mark the current state as visited
+        visited.add((current1, current2))
+        steps.append((current1, current2))
+        
+        # Generate all possible moves
+        possible_moves = [
+            (jug1, current2),       # Fill jug1
+            (current1, jug2),       # Fill jug2
+            (0, current2),          # Empty jug1
+            (current1, 0),          # Empty jug2
+            (min(current1 + current2, jug1), current1 + current2 - min(current1 + current2, jug1)),  # Pour jug2 -> jug1
+            (current1 + current2 - min(current1 + current2, jug2), min(current1 + current2, jug2))   # Pour jug1 -> jug2
+        ]
+
+        # Add possible moves to the queue if not already visited
+        for move in possible_moves:
+            if move not in visited:
+                queue.append(move)
+
+    return "No solution found."
+
+# Example usage
+jug1_capacity = 4
+jug2_capacity = 3
+target_amount = 2
+
+result = water_jug_bfs(jug1_capacity, jug2_capacity, target_amount)
+print("Steps to reach the target:")
+if isinstance(result, list):
+    for step in result:
+        print(f"Jug1: {step[0]}, Jug2: {step[1]}")
+else:
+    print(result)

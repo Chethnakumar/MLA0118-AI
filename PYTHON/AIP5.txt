@@ -1,0 +1,57 @@
+from collections import deque
+def validstate(cl, ml, cr, mr):
+    if cr<0 or mr<0 or cl<0 or ml<0:
+        return False
+    if (mr>0 and mr<cr) or (ml>0 and ml<cl):
+        return False
+    return True
+def bfs(ss):
+    queue = deque([ss])
+    visited = set()
+    visited.add(ss)
+    pmap = {ss: None}
+    actions = [(0,1), (0,2), (1,1), (1,0), (2,0)]
+    while queue:
+        cs = queue.popleft()
+        ml,cl,mr,cr,boat = cs
+        if ml==0 and cl==0:
+            return repath(cs,pmap)
+        if boat == 'l':
+            nextboat = 'r'
+            for mmove,cmove in actions:
+                ns = (ml-mmove, cl-cmove, mr+mmove, cr+cmove, nextboat)
+                if validstate(ns[0], ns[1], ns[2], ns[3]) and ns not in visited:
+                    queue.append(ns)
+                    visited.add(ns)
+                    pmap[ns] = cs
+        else:
+            nextboat = 'l' 
+            for mmove,cmove in actions:
+                ns = (ml+mmove, cl+cmove, mr-mmove, cr-cmove, nextboat)
+                if validstate(ns[0], ns[1], ns[2], ns[3]) and ns not in visited:
+                    queue.append(ns)
+                    visited.add(ns)
+                    pmap[ns] = cs
+    return None
+def repath(s, pmap):
+    path = []
+    while s is not None:
+        path.append(s)
+        s = pmap[s]
+    path.reverse()
+    return path
+def display(solution):
+    for step, s in enumerate(solution):
+        ml,cl,mr,cr,boat = s
+        print(f"step {step}:")
+        print(f"left - missionaries: {ml}, cannibals: {cl}")
+        print(f"right - missionaries: {mr}, cannibals: {cr}")
+        print(f"the boat is on {boat} side\n")
+if __name__ == "__main__":
+    ss = (3,3,0,0,'l')
+    solution = bfs(ss)
+    if solution:
+        display(solution)
+    else:
+        print('no solution found')
+        

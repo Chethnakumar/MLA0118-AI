@@ -1,0 +1,35 @@
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn import metrics
+import matplotlib.pyplot as plt
+
+# Example dataset: Iris dataset (built-in dataset in sklearn)
+from sklearn.datasets import load_iris
+
+# Load dataset
+data = load_iris()
+X = data.data  # Features
+y = data.target  # Target labels
+
+# Split the data into training and testing sets (80% train, 20% test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize the decision tree classifier
+clf = DecisionTreeClassifier(criterion='gini', max_depth=3)
+
+# Train the model
+clf.fit(X_train, y_train)
+
+# Make predictions on the test data
+y_pred = clf.predict(X_test)
+
+# Evaluate the model
+accuracy = metrics.accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy * 100:.2f}%')
+
+# Visualize the decision tree
+plt.figure(figsize=(12, 8))
+plot_tree(clf, filled=True, feature_names=data.feature_names, class_names=data.target_names, rounded=True)
+plt.show()

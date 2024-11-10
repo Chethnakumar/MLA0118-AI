@@ -1,0 +1,36 @@
+# Map Coloring using CSP with Backtracking (simplified)
+
+# Map adjacency graph
+graph = {
+    'A': ['B', 'C', 'D'],
+    'B': ['A', 'C', 'E'],
+    'C': ['A', 'B', 'D', 'E'],
+    'D': ['A', 'C'],
+    'E': ['B', 'C']
+}
+
+# Colors to choose from
+colors = ['Red', 'Green', 'Blue']
+
+# Check if the color assignment is valid
+def is_valid(assignment, region, color):
+    return all(assignment.get(neighbor) != color for neighbor in graph.get(region, []))
+
+# Backtracking to solve the map coloring problem
+def backtrack(assignment):
+    if len(assignment) == len(graph):  # All regions are colored
+        return assignment
+
+    region = next(r for r in graph if r not in assignment)  # Find an uncolored region
+    for color in colors:
+        if is_valid(assignment, region, color):
+            assignment[region] = color
+            result = backtrack(assignment)
+            if result: return result
+            del assignment[region]  # Backtrack
+
+    return None  # No solution
+
+# Solve and print result
+solution = backtrack({})
+print(solution if solution else "No solution found.")

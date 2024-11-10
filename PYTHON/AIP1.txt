@@ -1,0 +1,44 @@
+import heapq
+
+def manhattan_distance(state, goal):
+    return sum(abs(b % 3 - g % 3) + abs(b // 3 - g // 3) for b, g in ((state.index(i), goal.index(i)) for i in range(1, 9)))
+
+def neighbors(state):
+    i = state.index(0)
+    swaps = [(i - 3, i), (i + 3, i), (i - 1, i), (i + 1, i)]
+    valid_swaps = [s for s in swaps if 0 <= s[0] < 9 and (i % 3 == s[0] % 3 or i // 3 == s[0] // 3)]
+    return [swap(state, a, b) for a, b in valid_swaps]
+
+def swap(state, i, j):
+    s = state[:]
+    s[i], s[j] = s[j], s[i]
+    return s
+
+def a_star(start, goal):
+    queue = [(manhattan_distance(start, goal), 0, start, [])]
+    visited = set()
+    while queue:
+        _, moves, state, path = heapq.heappop(queue)
+        if state == goal:
+            return path + [state]
+        if tuple(state) in visited:
+            continue
+        visited.add(tuple(state))
+        for neighbor in neighbors(state):
+            if tuple(neighbor) not in visited:
+                heapq.heappush(queue, (moves + manhattan_distance(neighbor, goal), moves + 1, neighbor, path + [state]))
+
+# Example usage
+start = [1, 2, 3, 4, 0, 5, 6, 7, 8]
+goal = [1, 2, 3, 4, 5, 6, 7, 8, 0]
+
+solution = a_star(start, goal)
+if solution:
+    print("Solution found in", len(solution) - 1, "moves:")
+    for step in solution:
+        print(step[:3])
+        print(step[3:6])
+        print(step[6:])
+        print()
+else:
+    print("No solution exists.")

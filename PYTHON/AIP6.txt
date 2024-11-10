@@ -1,0 +1,47 @@
+class VacuumCleaner:
+    def __init__(self, initial_location, room_states):
+        # Initial location of the vacuum cleaner ('A' or 'B')
+        self.location = initial_location  
+        # State of the rooms: 'clean' or 'dirty'
+        self.room_states = room_states  
+    
+    def sense(self):
+        # Sense the state of the current room (clean or dirty)
+        return self.room_states[self.location]
+
+    def clean(self):
+        # Clean the current room
+        print(f"Room {self.location} is dirty. Cleaning...")
+        self.room_states[self.location] = 'clean'
+        print(f"Room {self.location} is now clean.")
+
+    def move(self):
+        # Move the vacuum cleaner to the other room
+        if self.location == 'A':
+            self.location = 'B'
+        else:
+            self.location = 'A'
+        print(f"Moving to Room {self.location}.")
+
+    def run(self):
+        steps = 0
+        while 'dirty' in self.room_states.values():
+            print(f"Step {steps}:")
+            if self.sense() == 'dirty':
+                self.clean()
+            else:
+                print(f"Room {self.location} is already clean.")
+            self.move()
+            steps += 1
+        print(f"All rooms are clean after {steps} steps.")
+
+# Example usage
+if __name__ == "__main__":
+    # Initialize room states: both A and B can be 'clean' or 'dirty'
+    room_states = {'A': 'dirty', 'B': 'dirty'}
+    # Initial location of the vacuum cleaner
+    initial_location = 'A'
+    
+    # Create a vacuum cleaner agent and start cleaning
+    vacuum = VacuumCleaner(initial_location, room_states)
+    vacuum.run()

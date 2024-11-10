@@ -1,0 +1,60 @@
+# Simple Tic-Tac-Toe game
+
+# Function to print the Tic-Tac-Toe board
+def print_board(board):
+    for row in board:
+        print(" | ".join(row))
+        print("-" * 5)
+
+# Function to check if a player has won
+def check_win(board, player):
+    for row in board:
+        if all(s == player for s in row): return True
+    for col in range(3):
+        if all(board[row][col] == player for row in range(3)): return True
+    if all(board[i][i] == player for i in range(3)): return True
+    if all(board[i][2-i] == player for i in range(3)): return True
+    return False
+
+# Function to check if the board is full
+def is_full(board):
+    return all(board[row][col] != " " for row in range(3) for col in range(3))
+
+# Main game loop
+def tic_tac_toe():
+    board = [[" " for _ in range(3)] for _ in range(3)]
+    players = ["X", "O"]
+    turn = 0
+
+    while True:
+        print_board(board)
+        player = players[turn % 2]
+        print(f"Player {player}'s turn")
+        
+        # Get player input
+        try:
+            row, col = map(int, input("Enter row and column (0-2): ").split())
+            if board[row][col] != " ":
+                print("Cell is already taken, try again.")
+                continue
+        except (ValueError, IndexError):
+            print("Invalid input, try again.")
+            continue
+        
+        # Make the move
+        board[row][col] = player
+        
+        # Check for win or draw
+        if check_win(board, player):
+            print_board(board)
+            print(f"Player {player} wins!")
+            break
+        elif is_full(board):
+            print_board(board)
+            print("It's a draw!")
+            break
+
+        turn += 1
+
+# Run the game
+tic_tac_toe()

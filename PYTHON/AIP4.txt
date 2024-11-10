@@ -1,0 +1,45 @@
+from itertools import permutations
+
+def solve_cryptarithmetic(equation):
+    # Extract unique letters from the equation
+    unique_letters = set(filter(str.isalpha, equation))
+    
+    # Ensure there are at most 10 unique letters (digits 0-9)
+    if len(unique_letters) > 10:
+        raise ValueError("Too many unique letters for a base-10 cryptarithmetic problem.")
+    
+    # Create a list of unique letters
+    unique_letters = list(unique_letters)
+    
+    # Try all permutations of digits for the letters
+    for perm in permutations(range(10), len(unique_letters)):
+        # Map each letter to a digit
+        letter_to_digit = dict(zip(unique_letters, perm))
+        
+        # Skip if any word would start with a zero
+        words = equation.replace("=", "==").split()
+        if any(letter_to_digit[word[0]] == 0 for word in words if word.isalpha()):
+            continue
+        
+        # Replace letters in the equation with corresponding digits
+        translated_equation = "".join(str(letter_to_digit[char]) if char.isalpha() else char for char in equation)
+        
+        # Replace '=' with '==' for evaluation
+        translated_equation = translated_equation.replace("=", "==")
+        
+        # Evaluate the equation to see if it holds true
+        if eval(translated_equation):
+            return letter_to_digit  # Solution found
+
+    return None  # No solution found
+
+# Example usage
+equation = "SEND + MORE = MONEY"
+solution = solve_cryptarithmetic(equation)
+
+if solution:
+    print("Solution found:")
+    for letter, digit in sorted(solution.items()):
+        print(f"{letter} = {digit}")
+else:
+    print("No solution exists.")
